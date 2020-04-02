@@ -11,11 +11,11 @@ myshell: myshell.o LineParser.o
 
 # Depends on the source and header files
 LineParser.o: $(SOURCE)/LineParser.c $(INCLUDE)/LineParser.h
-	gcc -g -Wall -ansi -c $(SOURCE)/LineParser.c -o $(BIN)/LineParser.o
+	gcc -g -Wall -c $(SOURCE)/LineParser.c -o $(BIN)/LineParser.o
 
 myshell.o: $(SOURCE)/myshell.c
 	mkdir -p bin
-	gcc -g -Wall -ansi -c $(SOURCE)/myshell.c -o $(BIN)/myshell.o
+	gcc -g -Wall -c $(SOURCE)/myshell.c -o $(BIN)/myshell.o
 
 #tell make that "clean" is not a file name!
 .PHONY: clean run
