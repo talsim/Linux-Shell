@@ -4,21 +4,31 @@
 #include "../include/LineParser.h"
 #include "../include/myshell.h"
 
-#define MAX_BUFFER_SIZE 2048
+#define MAX_INPUT_SIZE 2048
 
 int main()
 {
     printDirectory();
 
-    char buffer[MAX_BUFFER_SIZE] = "";
+    char buffer[MAX_INPUT_SIZE] = "";
     while (1)
     {
-        if(readLine(buffer, MAX_BUFFER_SIZE, stdin) != NULL)
+        if(readLine(buffer, MAX_INPUT_SIZE, stdin) != NULL)
         {
             printf("user input: %s\n", buffer);
         }
+        cmdLine *parsedLine = parseCmdLines(buffer);
+        execute(parsedLine);
     }
     return 1;
+}
+
+int execute(cmdLine *pCmdLine)
+{
+    char command[] = "/bin/";
+    strcat(command, pCmdLine->arguments[0]);
+    execv(command, pCmdLine->arguments);
+    return 0;
 }
 
 void printDirectory()
