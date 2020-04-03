@@ -15,20 +15,19 @@ int main()
     {
         if(readLine(buffer, MAX_INPUT_SIZE, stdin) != NULL)
         {
-            printf("user input: %s\n", buffer);
+            cmdLine *parsedLine = parseCmdLines(buffer);
+            execute(parsedLine);
         }
-        cmdLine *parsedLine = parseCmdLines(buffer);
-        execute(parsedLine);
     }
     return 1;
 }
 
 int execute(cmdLine *pCmdLine)
 {
-    char command[] = "/bin/";
+    char command[MAX_INPUT_SIZE] = "/bin/";
     strcat(command, pCmdLine->arguments[0]);
     execv(command, pCmdLine->arguments);
-    return 0;
+    return 1;
 }
 
 void printDirectory()
@@ -44,6 +43,6 @@ char* readLine(char *str, int n, FILE *stream)
 	if (ans == NULL)
 		return NULL;
 	int newlineIndex = strcspn(str, "\n");
-	str[newlineIndex] = '\0';
+	str[newlineIndex] = 0;
 	return str;
 }
