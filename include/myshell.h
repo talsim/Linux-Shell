@@ -5,5 +5,9 @@ void printDirectory();
 char* readLine(char *str, int n, FILE *stream);
 
 /*Executes the given command*/
-/*Returns 1 if everything is OK, else, returns 0*/
+/*Returns EXIT_SUCCESS if everything is OK, else, returns EXIT_FAILURE*/
 int execute(cmdLine* pCmdLine);
+
+/*Checks if the command is 'quit' or 'exit'*/
+/*Returns 1 if the given command is an exit command, otherwise, returns 0*/
+int isQuit(char* command);
