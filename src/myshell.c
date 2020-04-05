@@ -8,8 +8,12 @@
 
 #define MAX_INPUT_SIZE 2048
 
-int main()
+int debug = 0;
+
+int main(int argc, char *argv[])
 {
+    isDebug(argc);
+
     printDirectory();
 
     char buffer[MAX_INPUT_SIZE] = "";
@@ -64,5 +68,14 @@ int isQuit(char* command)
 {
     if (!strcmp(command, "quit") || !strcmp(command, "exit")) return 1;
     return 0;
+}
+
+void isDebug(int argc)
+{
+    if (argc > 1)
+    {
+        debug = 1;
+        printf("Debug mode enabled\n");
+    }
 }
 
