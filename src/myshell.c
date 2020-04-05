@@ -28,9 +28,10 @@ int main()
                 printf("Quiting...\n");
                 exit(EXIT_SUCCESS);
             }
+            freeCmdLines(parsedLine);
         }
     }
-    return 1;
+    return EXIT_SUCCESS;
 }
 
 int execute(cmdLine *pCmdLine)
@@ -38,8 +39,8 @@ int execute(cmdLine *pCmdLine)
     char command[MAX_INPUT_SIZE] = "/bin/";
     strcat(command, pCmdLine->arguments[0]);
     if (execv(command, pCmdLine->arguments)) // if execv() failed
-        return EXIT_FAILURE;
-    return EXIT_SUCCESS;
+        return 1;
+    return 0;
 }
 
 void printDirectory()
@@ -59,7 +60,7 @@ char* readLine(char *str, int n, FILE *stream)
 	return str;
 }
 
-int isQuit(char command[MAX_INPUT_SIZE])
+int isQuit(char* command)
 {
     if (!strcmp(command, "quit") || !strcmp(command, "exit")) return 1;
     return 0;
