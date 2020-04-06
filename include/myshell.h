@@ -14,4 +14,4 @@ int isQuit(char* command);
 
 /*Checks if -d flag is given*/
 /*If so, DEBUG is set to true*/
-void isDebug(int argc);
+void isDebug(char **argv);

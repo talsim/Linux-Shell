@@ -10,9 +10,10 @@
 
 int debug = 0;
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
-    isDebug(argc);
+    if(argc > 1)
+        isDebug(argv);
 
     printDirectory();
 
@@ -66,13 +67,13 @@ char* readLine(char *str, int n, FILE *stream)
 
 int isQuit(char* command)
 {
-    if (!strcmp(command, "quit") || !strcmp(command, "exit")) return 1;
+    if (strcmp(command, "quit") == 0 || strcmp(command, "exit") == 0) return 1;
     return 0;
 }
 
-void isDebug(int argc)
+void isDebug(char **argv)
 {
-    if (argc > 1)
+    if (strcmp(argv[1], "-d") == 0)
     {
         debug = 1;
         printf("Debug mode enabled\n");
