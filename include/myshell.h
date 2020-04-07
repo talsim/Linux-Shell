@@ -5,8 +5,8 @@ void printDirectory();
 char* readLine(char *str, int n, FILE *stream);
 
 /*Executes the given command*/
-/*Returns 1 if everything is OK, else, returns 0*/
-int execute(cmdLine* pCmdLine);
+/*Returns 0 if failed*/
+int executeSingleCommand(cmdLine* pCmdLine);
 
 /*Checks if the command is 'quit' or 'exit'*/
 /*Returns 1 if the given command is an exit command, otherwise, returns 0*/
@@ -18,4 +18,4 @@ void isDebug(char **argv);
 
 /*Forks and executes the command on the child proccess*/
 /*Returns 1 if it was successful, else, returns 0*/
-int forkAndExec(cmdLine *line);
+int execute(cmdLine *line);

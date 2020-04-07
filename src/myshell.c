@@ -27,25 +27,15 @@ int main(int argc, char **argv)
             cmdLine *parsedLine = parseCmdLines(buffer);
             if (!isQuit(parsedLine->arguments[0])) // if user entered a command
             {
-                forkAndExec(parsedLine);
+                execute(parsedLine);
             }
             else
-            {
-                printf("Quiting...\n");
                 exit(EXIT_SUCCESS);
-            }
+
             freeCmdLines(parsedLine);
         }
     }
     return EXIT_SUCCESS;
-}
-
-int execute(cmdLine *pCmdLine)
-{
-    char *command = pCmdLine->arguments[0];
-    if (execvp(command, pCmdLine->arguments))
-        return 1;
-    return 0;
 }
 
 void printDirectory()
@@ -53,6 +43,14 @@ void printDirectory()
     char cwd[100] = "";
     if (getcwd(cwd, sizeof(cwd)) != NULL)
         printf("> Current working direcotry: %s\n", cwd);
+}
+
+int executeSingleCommand(cmdLine *pCmdLine)
+{
+    char *command = pCmdLine->arguments[0];
+    execvp(command, pCmdLine->arguments);
+    // execvp failed if code reaches this line
+    return 0;
 }
 
 char *readLine(char *str, int n, FILE *stream)
@@ -81,29 +79,32 @@ void isDebug(char **argv)
     }
 }
 
-int forkAndExec(cmdLine *line)
+int execute(cmdLine *line)
 {
     pid_t pid = fork();
     switch (pid)
     {
     case 0:
+    {
         // runs on child proccess:
-        if (execute(line))
+        int status = executeSingleCommand(line);
+        if (status != 1)
         {
             perror("Error");
             _exit(EXIT_FAILURE);
         }
-        _exit(EXIT_SUCCESS);
         break;
+    }
     case -1:
         // fork failed
         fprintf(stderr, "fork() failed");
         return 0;
-    // runs on parent proccess:
+        // runs on parent proccess:
     default:
         if (debug)
         {
             fprintf(stderr, "Forked, parent proccess id: %d\n", getpid());
+            fprintf(stderr, "Child proccess id: %d\n", pid);
             fprintf(stderr, "Executing command: %s\n", line->arguments[0]);
         }
         return 1;
