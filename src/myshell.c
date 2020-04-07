@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <sys/types.h>
 #include "../include/LineParser.h"
 #include "../include/myshell.h"
 
@@ -12,7 +13,8 @@ int debug = 0;
 
 int main(int argc, char **argv)
 {
-    if(argc > 1)
+
+    if (argc > 1)
         isDebug(argv);
 
     printDirectory();
@@ -20,13 +22,12 @@ int main(int argc, char **argv)
     char buffer[MAX_INPUT_SIZE] = "";
     while (1)
     {
-        if(readLine(buffer, MAX_INPUT_SIZE, stdin) != NULL)
+        if (readLine(buffer, MAX_INPUT_SIZE, stdin) != NULL)
         {
             cmdLine *parsedLine = parseCmdLines(buffer);
-            if(!isQuit(parsedLine->arguments[0])) // if user entered a command
+            if (!isQuit(parsedLine->arguments[0])) // if user entered a command
             {
-                if (execute(parsedLine))
-                    perror("Error");
+                forkAndExec(parsedLine);
             }
             else
             {
@@ -41,9 +42,8 @@ int main(int argc, char **argv)
 
 int execute(cmdLine *pCmdLine)
 {
-    char command[MAX_INPUT_SIZE] = "/bin/";
-    strcat(command, pCmdLine->arguments[0]);
-    if (execv(command, pCmdLine->arguments)) // if execv() failed
+    char *command = pCmdLine->arguments[0];
+    if (execvp(command, pCmdLine->arguments))
         return 1;
     return 0;
 }
@@ -55,19 +55,20 @@ void printDirectory()
         printf("> Current working direcotry: %s\n", cwd);
 }
 
-char* readLine(char *str, int n, FILE *stream)
+char *readLine(char *str, int n, FILE *stream)
 {
-	char *ans = fgets(str, n, stream);
-	if (ans == NULL)
-		return NULL;
-	int newlineIndex = strcspn(str, "\n");
-	str[newlineIndex] = 0;
-	return str;
+    char *ans = fgets(str, n, stream);
+    if (ans == NULL)
+        return NULL;
+    int newlineIndex = strcspn(str, "\n");
+    str[newlineIndex] = 0;
+    return str;
 }
 
-int isQuit(char* command)
+int isQuit(char *command)
 {
-    if (strcmp(command, "quit") == 0 || strcmp(command, "exit") == 0) return 1;
+    if (strcmp(command, "quit") == 0 || strcmp(command, "exit") == 0)
+        return 1;
     return 0;
 }
 
@@ -80,3 +81,31 @@ void isDebug(char **argv)
     }
 }
 
+int forkAndExec(cmdLine *line)
+{
+    pid_t pid = fork();
+    switch (pid)
+    {
+    case 0:
+        // runs on child proccess:
+        if (execute(line))
+        {
+            perror("Error");
+            _exit(EXIT_FAILURE);
+        }
+        _exit(EXIT_SUCCESS);
+        break;
+    case -1:
+        // fork failed
+        fprintf(stderr, "fork() failed");
+        return 0;
+    // runs on parent proccess:
+    default:
+        if (debug)
+        {
+            fprintf(stderr, "Forked, parent proccess id: %d\n", getpid());
+            fprintf(stderr, "Executing command: %s\n", line->arguments[0]);
+        }
+        return 1;
+    }
+}
