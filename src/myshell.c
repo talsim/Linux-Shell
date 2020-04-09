@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include "../include/LineParser.h"
 #include "../include/myshell.h"
 
@@ -13,7 +14,6 @@ int debug = 0;
 
 int main(int argc, char **argv)
 {
-
     if (argc > 1)
         isDebug(argv);
 
@@ -49,8 +49,7 @@ int executeSingleCommand(cmdLine *pCmdLine)
 {
     char *command = pCmdLine->arguments[0];
     execvp(command, pCmdLine->arguments);
-    // execvp failed if code reaches this line
-    return 0;
+    return 0; // execvp failed if code reaches this line
 }
 
 char *readLine(char *str, int n, FILE *stream)
@@ -90,7 +89,7 @@ int execute(cmdLine *line)
         int status = executeSingleCommand(line);
         if (status != 1)
         {
-            perror("Error");
+            fprintf(stderr, "Error: %s: command not found\n", line->arguments[0]);
             _exit(EXIT_FAILURE);
         }
         break;
@@ -99,8 +98,14 @@ int execute(cmdLine *line)
         // fork failed
         fprintf(stderr, "fork() failed");
         return 0;
-        // runs on parent proccess:
     default:
+        // runs on parent proccess:
+        if (line->blocking == 1) // if ampersand isn't added, wait for child to finish
+        {
+            int waitpidVal = waitpid(pid, NULL, 0);
+            if (waitpidVal != pid)
+                perror("waitpid:");
+        }
         if (debug)
         {
             fprintf(stderr, "Forked, parent proccess id: %d\n", getpid());
