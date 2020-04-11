@@ -29,9 +29,13 @@ int main(int argc, char **argv)
         if (readLine(buffer, MAX_INPUT_SIZE, stdin) != NULL)
         {
             cmdLine *parsedLine = parseCmdLines(buffer);
-            if (!isQuit(parsedLine->arguments[0])) // if user entered a command
+            char *command = parsedLine->arguments[0];
+            if (!isQuit(command)) // if user entered a command
             {
-                execute(parsedLine);
+                if (strcmp(command, "cd") == 0) // if the command is "cd"
+                    chCwd(parsedLine);
+                else
+                    execute(parsedLine);
             }
             else
                 exit(EXIT_SUCCESS);
@@ -113,21 +117,6 @@ int execute(cmdLine *line)
             if (waitpidVal != pid)
                 perror("waitpid:");
         }
-
-        if (strcmp(line->arguments[0], "cd") == 0)
-        {
-            if (line->argCount > 1)
-            {
-                int chdirResult = chdir(line->arguments[1]);
-                if (chdirResult != 0)
-                    fprintf(stderr, "chdir() failed\n");
-            }
-            else
-            {
-                perror("cd");
-            }
-        }
-
         if (debug)
         {
             fprintf(stderr, "Forked, parent proccess id: %d\n", getpid());
@@ -136,4 +125,21 @@ int execute(cmdLine *line)
         }
         return 1;
     }
+}
+
+int chCwd(cmdLine *line)
+{
+    if (line->argCount > 1) // Ok
+    {
+        int chdirResult = chdir(line->arguments[1]);
+        if (chdirResult != 0)
+            perror("Error: cd");
+        return -1;
+    }
+    else
+    {
+        fprintf(stderr, "Error: cd: Not enough arguments\n");
+        return -1;
+    }
+    return 0;
 }
