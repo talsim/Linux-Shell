@@ -1,4 +1,4 @@
-/*Prints current working directory*/
+/*Prints current working directory in Linux printing style*/
 void printDirectory();
 
 /*fgets without reading newline character*/
