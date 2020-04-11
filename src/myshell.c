@@ -10,6 +10,11 @@
 
 #define MAX_INPUT_SIZE 2048
 
+// Ansi color codes
+#define BOLD_BLUE "\x1B[1;34m"
+#define BOLD_RED "\x1B[1;31m"
+#define RESET "\x1B[0m"
+
 int debug = 0;
 
 int main(int argc, char **argv)
@@ -17,11 +22,10 @@ int main(int argc, char **argv)
     if (argc > 1)
         isDebug(argv);
 
-    printDirectory();
-
     char buffer[MAX_INPUT_SIZE] = "";
     while (1)
     {
+        printDirectory();
         if (readLine(buffer, MAX_INPUT_SIZE, stdin) != NULL)
         {
             cmdLine *parsedLine = parseCmdLines(buffer);
@@ -42,7 +46,10 @@ void printDirectory()
 {
     char cwd[100] = "";
     if (getcwd(cwd, sizeof(cwd)) != NULL)
-        printf("> Current working direcotry: %s\n", cwd);
+    {
+        char *pCwd = cwd + 1;
+        printf(BOLD_BLUE "%s" RESET "# ", pCwd); // Linux shell printing style
+    }
 }
 
 int executeSingleCommand(cmdLine *pCmdLine)
@@ -106,6 +113,21 @@ int execute(cmdLine *line)
             if (waitpidVal != pid)
                 perror("waitpid:");
         }
+
+        if (strcmp(line->arguments[0], "cd") == 0)
+        {
+            if (line->argCount > 1)
+            {
+                int chdirResult = chdir(line->arguments[1]);
+                if (chdirResult != 0)
+                    fprintf(stderr, "chdir() failed\n");
+            }
+            else
+            {
+                perror("cd");
+            }
+        }
+
         if (debug)
         {
             fprintf(stderr, "Forked, parent proccess id: %d\n", getpid());
