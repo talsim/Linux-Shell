@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <errno.h>
 #include "../include/LineParser.h"
 #include "../include/myshell.h"
 
@@ -16,9 +17,12 @@
 #define RESET "\x1B[0m"
 
 int debug = 0;
+char *programName = "";
 
 int main(int argc, char **argv)
 {
+    programName = argv[0] + 2; // argv[0] + 2 = program name without "./"
+
     if (argc > 1)
         isDebug(argv);
 
@@ -100,14 +104,14 @@ int execute(cmdLine *line)
         int status = executeSingleCommand(line);
         if (status != 1)
         {
-            fprintf(stderr, "Error: %s: command not found\n", line->arguments[0]);
+            fprintf(stderr, "%s: %s: command not found\n", programName, line->arguments[0]);
             _exit(EXIT_FAILURE);
         }
         break;
     }
     case -1:
         // fork failed
-        fprintf(stderr, "fork() failed");
+        fprintf(stderr, "%s: fork: %s\n", programName, strerror(errno));
         return 0;
     default:
         // runs on parent proccess:
@@ -119,8 +123,8 @@ int execute(cmdLine *line)
             fprintf(stderr, "Child proccess id: %d\n", pid);
             fprintf(stderr, "Executing command: %s\n", line->arguments[0]);
         }
-        return 1;
     }
+    return 1;
 }
 
 int chCwd(cmdLine *line)
@@ -129,7 +133,7 @@ int chCwd(cmdLine *line)
     {
         int chdirResult = chdir(line->arguments[1]);
         if (chdirResult != 0)
-            perror("Error: cd");
+            fprintf(stderr, "%s: cd: %s\n", programName, strerror(errno));
         return -1;
     }
     return 0;
@@ -140,8 +144,8 @@ int waitForChild(pid_t pid)
     int waitpidVal = waitpid(pid, NULL, 0);
     if (waitpidVal != pid)
     {
-        perror("Error: waitpid:");
+        fprintf(stderr, "%s: waitpid: %s\n", programName, strerror(errno));
         return -1;
-    }  
+    }
     return 0;
 }
