@@ -112,11 +112,7 @@ int execute(cmdLine *line)
     default:
         // runs on parent proccess:
         if (line->blocking == 1) // if ampersand isn't added, wait for child to finish
-        {
-            int waitpidVal = waitpid(pid, NULL, 0);
-            if (waitpidVal != pid)
-                perror("waitpid:");
-        }
+            waitForChild(pid);
         if (debug)
         {
             fprintf(stderr, "Forked, parent proccess id: %d\n", getpid());
@@ -136,10 +132,16 @@ int chCwd(cmdLine *line)
             perror("Error: cd");
         return -1;
     }
-    else
+    return 0;
+}
+
+int waitForChild(pid_t pid)
+{
+    int waitpidVal = waitpid(pid, NULL, 0);
+    if (waitpidVal != pid)
     {
-        fprintf(stderr, "Error: cd: Not enough arguments\n");
+        perror("Error: waitpid:");
         return -1;
-    }
+    }  
     return 0;
 }
