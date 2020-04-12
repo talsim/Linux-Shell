@@ -27,3 +27,6 @@ int chCwd(cmdLine *line);
 /*Waits for the child proccess to finish*/
 /*Returns 0 on success, -1 otherwise*/
 int waitForChild(pid_t pid);
+
+/*Prints error message of the given command*/
+void printErrMsg(char* command);

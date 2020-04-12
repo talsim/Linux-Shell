@@ -8,6 +8,7 @@
 #include <errno.h>
 #include "../include/LineParser.h"
 #include "../include/myshell.h"
+//#include "../include/errorMessages.h"
 
 #define MAX_INPUT_SIZE 2048
 
@@ -104,14 +105,14 @@ int execute(cmdLine *line)
         int status = executeSingleCommand(line);
         if (status != 1)
         {
-            fprintf(stderr, "%s: %s: command not found\n", programName, line->arguments[0]);
+            printErrMsg(line->arguments[0]);
             _exit(EXIT_FAILURE);
         }
         break;
     }
     case -1:
         // fork failed
-        fprintf(stderr, "%s: fork: %s\n", programName, strerror(errno));
+        printErrMsg("fork");
         return 0;
     default:
         // runs on parent proccess:
@@ -133,7 +134,7 @@ int chCwd(cmdLine *line)
     {
         int chdirResult = chdir(line->arguments[1]);
         if (chdirResult != 0)
-            fprintf(stderr, "%s: cd: %s\n", programName, strerror(errno));
+            printErrMsg("cd");
         return -1;
     }
     return 0;
@@ -144,8 +145,28 @@ int waitForChild(pid_t pid)
     int waitpidVal = waitpid(pid, NULL, 0);
     if (waitpidVal != pid)
     {
-        fprintf(stderr, "%s: waitpid: %s\n", programName, strerror(errno));
+        printErrMsg("waitpid");
         return -1;
     }
     return 0;
+}
+
+void printErrMsg(char *command)
+{
+    char firstChar = command[0];
+    switch (firstChar)
+    {
+    case 'c':
+        fprintf(stderr, "%s: cd: " BOLD_RED "%s\n", programName, strerror(errno));
+        break;
+    case 'w':
+        fprintf(stderr, "%s: waitpid: " BOLD_RED "%s\n", programName, strerror(errno));
+        break;
+    case 'f':
+        fprintf(stderr, "%s: fork: " BOLD_RED "%s\n", programName, strerror(errno));
+        break;
+    default:
+        fprintf(stderr, "%s: %s: " BOLD_RED "command not found\n", programName, command);
+        break;
+    }
 }
