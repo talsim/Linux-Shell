@@ -22,11 +22,11 @@ int execute(cmdLine *line);
 
 /*Changes the current working directoy*/
 /*On success, returns zero. On error, -1 is returned.*/
-int chCwd(cmdLine *line);
+int changeCwd(cmdLine *line);
 
 /*Waits for the child proccess to finish*/
 /*Returns 0 on success, -1 otherwise*/
 int waitForChild(pid_t pid);
 
 /*Prints error message of the given command*/
-void printErrMsg(char* command);
+void printErrMsg(char *command);

@@ -8,7 +8,6 @@
 #include <errno.h>
 #include "../include/LineParser.h"
 #include "../include/myshell.h"
-//#include "../include/errorMessages.h"
 
 #define MAX_INPUT_SIZE 2048
 
@@ -31,14 +30,15 @@ int main(int argc, char **argv)
     while (1)
     {
         printDirectory();
-        if (readLine(buffer, MAX_INPUT_SIZE, stdin) != NULL)
+        readLine(buffer, MAX_INPUT_SIZE, stdin);
+        if (strcmp(buffer, "") != 0)
         {
             cmdLine *parsedLine = parseCmdLines(buffer);
             char *command = parsedLine->arguments[0];
             if (!isQuit(command)) // if user entered a command
             {
                 if (strcmp(command, "cd") == 0) // if the command is "cd"
-                    chCwd(parsedLine);
+                    changeCwd(parsedLine);
                 else
                     execute(parsedLine);
             }
@@ -112,7 +112,7 @@ int execute(cmdLine *line)
     }
     case -1:
         // fork failed
-        printErrMsg("fork");
+        fprintf(stderr, "%s: fork: %s\n", programName, strerror(errno));
         return 0;
     default:
         // runs on parent proccess:
@@ -128,24 +128,26 @@ int execute(cmdLine *line)
     return 1;
 }
 
-int chCwd(cmdLine *line)
+int changeCwd(cmdLine *line)
 {
-    if (line->argCount > 1) // Ok
+    if (line->argCount > 1)
     {
         int chdirResult = chdir(line->arguments[1]);
         if (chdirResult != 0)
+        {
             printErrMsg("cd");
-        return -1;
+            return -1;
+        }
     }
     return 0;
 }
 
 int waitForChild(pid_t pid)
 {
-    int waitpidVal = waitpid(pid, NULL, 0);
-    if (waitpidVal != pid)
+    int waitpidResult = waitpid(pid, NULL, 0);
+    if (waitpidResult != pid)
     {
-        printErrMsg("waitpid");
+        fprintf(stderr, "%s: waitpid: %s\n", programName, strerror(errno));
         return -1;
     }
     return 0;
@@ -153,20 +155,5 @@ int waitForChild(pid_t pid)
 
 void printErrMsg(char *command)
 {
-    char firstChar = command[0];
-    switch (firstChar)
-    {
-    case 'c':
-        fprintf(stderr, "%s: cd: " BOLD_RED "%s\n", programName, strerror(errno));
-        break;
-    case 'w':
-        fprintf(stderr, "%s: waitpid: " BOLD_RED "%s\n", programName, strerror(errno));
-        break;
-    case 'f':
-        fprintf(stderr, "%s: fork: " BOLD_RED "%s\n", programName, strerror(errno));
-        break;
-    default:
-        fprintf(stderr, "%s: %s: " BOLD_RED "command not found\n", programName, command);
-        break;
-    }
+    fprintf(stderr, "%s: %s: " BOLD_RED "%s\n", programName, command, strerror(errno));
 }
