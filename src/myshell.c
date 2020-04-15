@@ -1,20 +1,13 @@
-#include <stdio.h>
-#include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <ctype.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include <errno.h>
+#include <stdio.h>
 #include "../include/LineParser.h"
 #include "../include/myshell.h"
+#include "../include/LinkedList.h"
+#include "../include/Utils.h"
 
 #define MAX_INPUT_SIZE 2048
-
-// Ansi color codes
-#define BOLD_BLUE "\x1B[1;34m"
-#define BOLD_RED "\x1B[1;31m"
-#define RESET "\x1B[0m"
 
 int debug = 0;
 char *programName = "";
@@ -31,13 +24,13 @@ int main(int argc, char **argv)
     {
         printDirectory();
         readLine(buffer, MAX_INPUT_SIZE, stdin);
-        if (strcmp(buffer, "") != 0)
+        if (!isCommand(buffer, ""))
         {
             cmdLine *parsedLine = parseCmdLines(buffer);
             char *command = parsedLine->arguments[0];
             if (!isQuit(command)) // if user entered a command
             {
-                if (strcmp(command, "cd") == 0) // if the command is "cd"
+                if (isCommand(command, "cd")) // if the command is "cd"
                     changeCwd(parsedLine);
                 else
                     execute(parsedLine);
@@ -51,47 +44,11 @@ int main(int argc, char **argv)
     return EXIT_SUCCESS;
 }
 
-void printDirectory()
-{
-    char cwd[100] = "";
-    if (getcwd(cwd, sizeof(cwd)) != NULL)
-    {
-        char *pCwd = cwd + 1;
-        printf(BOLD_BLUE "%s" RESET "# ", pCwd); // Linux shell printing style
-    }
-}
-
 int executeSingleCommand(cmdLine *pCmdLine)
 {
     char *command = pCmdLine->arguments[0];
     execvp(command, pCmdLine->arguments);
     return 0; // execvp failed if code reaches this line
-}
-
-char *readLine(char *str, int n, FILE *stream)
-{
-    char *ans = fgets(str, n, stream);
-    if (ans == NULL)
-        return NULL;
-    int newlineIndex = strcspn(str, "\n");
-    str[newlineIndex] = 0;
-    return str;
-}
-
-int isQuit(char *command)
-{
-    if (strcmp(command, "quit") == 0 || strcmp(command, "exit") == 0)
-        return 1;
-    return 0;
-}
-
-void isDebug(char **argv)
-{
-    if (strcmp(argv[1], "-d") == 0)
-    {
-        debug = 1;
-        printf("Debug mode enabled\n");
-    }
 }
 
 int execute(cmdLine *line)
@@ -112,7 +69,7 @@ int execute(cmdLine *line)
     }
     case -1:
         // fork failed
-        fprintf(stderr, "%s: fork: %s\n", programName, strerror(errno));
+        printErrMsg("fork");
         return 0;
     default:
         // runs on parent proccess:
@@ -140,20 +97,4 @@ int changeCwd(cmdLine *line)
         }
     }
     return 0;
-}
-
-int waitForChild(pid_t pid)
-{
-    int waitpidResult = waitpid(pid, NULL, 0);
-    if (waitpidResult != pid)
-    {
-        fprintf(stderr, "%s: waitpid: %s\n", programName, strerror(errno));
-        return -1;
-    }
-    return 0;
-}
-
-void printErrMsg(char *command)
-{
-    fprintf(stderr, "%s: %s: " BOLD_RED "%s\n", programName, command, strerror(errno));
 }
