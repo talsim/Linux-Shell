@@ -5,7 +5,7 @@
 #include "../include/LineParser.h"
 #include "../include/myshell.h"
 #include "../include/LinkedList.h"
-#include "../include/Utils.h"
+#include "../include/utils.h"
 
 #define MAX_INPUT_SIZE 2048
 

@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 #include <errno.h>
 #include <stdio.h>
-#include "../include/Utils.h"
+#include "../include/utils.h"
 
 extern int debug;
 extern char* programName;
@@ -18,7 +18,7 @@ extern char* programName;
 
 void printErrMsg(char *command)
 {
-    fprintf(stderr, "%s: %s: " BOLD_RED "%s\n", programName, command, strerror(errno));
+    fprintf(stderr, "%s: %s: " BOLD_RED "%s\n" RESET, programName, command, strerror(errno));
 }
 
 int waitForChild(pid_t pid)
@@ -50,7 +50,7 @@ int isQuit(char *command)
 
 int isCommand(char *command, char *compareTo)
 {
-    return !strcmp(command, compareTo);
+    return strcmp(command, compareTo) == 0;
 }
 
 char *readLine(char *str, int n, FILE *stream)
