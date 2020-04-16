@@ -32,6 +32,11 @@ int main(int argc, char **argv)
             {
                 if (isCommand(command, "cd")) // if the command is "cd"
                     changeCwd(parsedLine);
+
+                else if(isCommand(command, "history"))
+                {
+                    history();
+                }
                 else
                     execute(parsedLine);
             }
