@@ -1,5 +1,9 @@
+#include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <ctype.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <errno.h>
 #include <stdio.h>
 #include "../include/LineParser.h"
@@ -9,16 +13,23 @@
 
 #define MAX_INPUT_SIZE 2048
 
+/*Waits for the child proccess to finish*/
+/*Returns 0 on success, -1 otherwise*/
+static int waitForChild(pid_t pid);
+
+static int saveCommand(List *list, char **argv);
+
 int debug = 0;
 char *programName = "";
 
 int main(int argc, char **argv)
 {
-    programName = argv[0] + 2; // argv[0] + 2 = program name without "./"
+    programName = argv[2]; // argv[2] = program name without "./"
 
     if (argc > 1)
         isDebug(argv);
 
+    List *history = create_list();
     char buffer[MAX_INPUT_SIZE] = "";
     while (1)
     {
@@ -30,12 +41,14 @@ int main(int argc, char **argv)
             char *command = parsedLine->arguments[0];
             if (!isQuit(command)) // if user entered a command
             {
+                saveCommand(history, parsedLine->arguments);
                 if (isCommand(command, "cd")) // if the command is "cd"
                     changeCwd(parsedLine);
 
-                else if(isCommand(command, "history"))
+                else if (isCommand(command, "history"))
                 {
-                    history();
+                    printf("history:\n");
+                    print_list(history);
                 }
                 else
                     execute(parsedLine);
@@ -101,5 +114,23 @@ int changeCwd(cmdLine *line)
             return -1;
         }
     }
+    return 0;
+}
+
+static int waitForChild(pid_t pid)
+{
+    int waitpidResult = waitpid(pid, NULL, 0);
+    if (waitpidResult != pid)
+    {
+        fprintf(stderr, "%s: waitpid: %s\n", programName, strerror(errno));
+        return -1;
+    }
+    return 0;
+}
+
+static int saveCommand(List *list, char **argv)
+{
+    char *data = combineCommandAndArgs(argv);
+    add_last(list, data);
     return 0;
 }

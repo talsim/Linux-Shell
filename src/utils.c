@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include "../include/utils.h"
+#include "../include/LinkedList.h"
 
 extern int debug;
 extern char* programName;
@@ -19,17 +20,6 @@ extern char* programName;
 void printErrMsg(char *command)
 {
     fprintf(stderr, "%s: %s: " BOLD_RED "%s\n" RESET, programName, command, strerror(errno));
-}
-
-int waitForChild(pid_t pid)
-{
-    int waitpidResult = waitpid(pid, NULL, 0);
-    if (waitpidResult != pid)
-    {
-        fprintf(stderr, "%s: waitpid: %s\n", programName, strerror(errno));
-        return -1;
-    }
-    return 0;
 }
 
 void isDebug(char **argv)
@@ -71,4 +61,22 @@ void printDirectory()
         char *pCwd = cwd + 1;
         printf(BOLD_BLUE "%s" RESET "# ", pCwd); // Linux shell printing style
     }
+}
+
+char* combineCommandAndArgs(char **argv)
+{
+    char command[] = "";
+    strcpy(command, argv[0]);
+    char **args = argv + 1;
+    char *ans = command;
+    int maxArgsLength = 255; // in LineParser -> max length of argv = 256
+
+    for (int i = 0; i < maxArgsLength; i++)
+    {
+        if (args[i] == NULL)
+            break;
+        strcat(ans, " ");
+        strcat(ans, args[i]);
+    }
+    return ans;
 }

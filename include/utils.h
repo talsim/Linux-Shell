@@ -1,7 +1,3 @@
-/*Waits for the child proccess to finish*/
-/*Returns 0 on success, -1 otherwise*/
-int waitForChild(pid_t pid);
-
 /*Prints error message of the given command*/
 void printErrMsg(char *command);
 
@@ -22,3 +18,5 @@ void printDirectory();
 /*Compares the two given commands*/
 /*Returns 1 if both are equal, 0 otherwise*/
 int isCommand(char *command, char *compareTo);
+
+char* combineCommandAndArgs(char **argv);
