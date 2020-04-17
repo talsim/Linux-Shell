@@ -10,7 +10,7 @@
 #include "../include/LinkedList.h"
 
 extern int debug;
-extern char* programName;
+extern char *programName;
 
 // Ansi color codes
 #define BOLD_BLUE "\x1B[1;34m"
@@ -63,9 +63,9 @@ void printDirectory()
     }
 }
 
-char* combineCommandAndArgs(char **argv)
+char *combineCommandAndArgs(char **argv)
 {
-    char command[] = "";
+    char command[100] = "";
     strcpy(command, argv[0]);
     char **args = argv + 1;
     char *ans = command;
@@ -79,4 +79,11 @@ char* combineCommandAndArgs(char **argv)
         strcat(ans, args[i]);
     }
     return ans;
+}
+
+char *strClone(const char *source)
+{
+    char *clone = (char *)malloc(strlen(source) + 1);
+    strcpy(clone, source);
+    return clone;
 }

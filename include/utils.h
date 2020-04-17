@@ -3,14 +3,14 @@ void printErrMsg(char *command);
 
 /*Checks if the command is 'quit' or 'exit'*/
 /*Returns 1 if the given command is an exit command, otherwise, returns 0*/
-int isQuit(char* command);
+int isQuit(char *command);
 
 /*Checks if -d flag is given*/
 /*If so, DEBUG is set to true*/
 void isDebug(char **argv);
 
 /*fgets without reading newline character*/
-char* readLine(char *str, int n, FILE *stream);
+char *readLine(char *str, int n, FILE *stream);
 
 /*Prints current working directory in Linux printing style*/
 void printDirectory();
@@ -19,4 +19,6 @@ void printDirectory();
 /*Returns 1 if both are equal, 0 otherwise*/
 int isCommand(char *command, char *compareTo);
 
-char* combineCommandAndArgs(char **argv);
+char *combineCommandAndArgs(char **argv);
+
+char *strClone(const char *source);

@@ -30,6 +30,7 @@ int main(int argc, char **argv)
         isDebug(argv);
 
     List *history = create_list();
+
     char buffer[MAX_INPUT_SIZE] = "";
     while (1)
     {
@@ -42,6 +43,7 @@ int main(int argc, char **argv)
             if (!isQuit(command)) // if user entered a command
             {
                 saveCommand(history, parsedLine->arguments);
+
                 if (isCommand(command, "cd")) // if the command is "cd"
                     changeCwd(parsedLine);
 
@@ -54,7 +56,10 @@ int main(int argc, char **argv)
                     execute(parsedLine);
             }
             else
+            {
+                free_list(history);
                 exit(EXIT_SUCCESS);
+            }
 
             freeCmdLines(parsedLine);
         }
@@ -130,7 +135,8 @@ static int waitForChild(pid_t pid)
 
 static int saveCommand(List *list, char **argv)
 {
-    char *data = combineCommandAndArgs(argv);
+    char *combineResult = combineCommandAndArgs(argv);
+    char *data = strClone(combineResult);0
     add_last(list, data);
     return 0;
 }
