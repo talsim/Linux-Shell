@@ -59,31 +59,27 @@ void printDirectory()
     if (getcwd(cwd, sizeof(cwd)) != NULL)
     {
         char *pCwd = cwd + 1;
-        printf(BOLD_BLUE "%s" RESET "# ", pCwd); // Linux shell printing style
+        printf(BOLD_BLUE "%s" RESET "# ", pCwd); // Linux printing style
     }
 }
 
-char *combineCommandAndArgs(char **argv)
+char *combineCommandAndArgs(const char **argv)
 {
-    char command[100] = "";
-    strcpy(command, argv[0]);
-    char **args = argv + 1;
-    char *ans = command;
-    int maxArgsLength = 255; // in LineParser -> max length of argv = 256
-
-    for (int i = 0; i < maxArgsLength; i++)
+    char *ans = (char *)malloc(strlen(argv[0]) + 1); // allocate argv[0] bytes on heap memory
+    if (ans)
     {
-        if (args[i] == NULL)
-            break;
-        strcat(ans, " ");
-        strcat(ans, args[i]);
-    }
-    return ans;
-}
+        strcpy(ans, argv[0]);
+        const char **args = argv + 1;
+        int maxArgsLength = 255; // in LineParser -> max length of argv = 256
 
-char *strClone(const char *source)
-{
-    char *clone = (char *)malloc(strlen(source) + 1);
-    strcpy(clone, source);
-    return clone;
+        for (int i = 0; i < maxArgsLength; i++)
+        {
+            if (args[i] == NULL)
+                break;
+            strcat(ans, " ");
+            strcat(ans, args[i]);
+        }
+        return ans;
+    }
+    return NULL;
 }

@@ -7,24 +7,18 @@
 #include <errno.h>
 #include <stdio.h>
 #include "../include/LineParser.h"
-#include "../include/myshell.h"
 #include "../include/LinkedList.h"
 #include "../include/utils.h"
+#include "../include/myshell.h"
 
 #define MAX_INPUT_SIZE 2048
-
-/*Waits for the child proccess to finish*/
-/*Returns 0 on success, -1 otherwise*/
-static int waitForChild(pid_t pid);
-
-static int saveCommand(List *list, char **argv);
 
 int debug = 0;
 char *programName = "";
 
 int main(int argc, char **argv)
 {
-    programName = argv[2]; // argv[2] = program name without "./"
+    programName = argv[0] + 2; // argv[0] + 2 = program name without "./"
 
     if (argc > 1)
         isDebug(argv);
@@ -93,7 +87,7 @@ int execute(cmdLine *line)
     case -1:
         // fork failed
         printErrMsg("fork");
-        return 0;
+        return -1;
     default:
         // runs on parent proccess:
         if (line->blocking == 1) // if ampersand isn't added, wait for child to finish
@@ -105,7 +99,7 @@ int execute(cmdLine *line)
             fprintf(stderr, "Executing command: %s\n", line->arguments[0]);
         }
     }
-    return 1;
+    return 0;
 }
 
 int changeCwd(cmdLine *line)
@@ -122,7 +116,7 @@ int changeCwd(cmdLine *line)
     return 0;
 }
 
-static int waitForChild(pid_t pid)
+int waitForChild(pid_t pid)
 {
     int waitpidResult = waitpid(pid, NULL, 0);
     if (waitpidResult != pid)
@@ -133,10 +127,13 @@ static int waitForChild(pid_t pid)
     return 0;
 }
 
-static int saveCommand(List *list, char **argv)
+int saveCommand(List *list, const char **argv)
 {
-    char *combineResult = combineCommandAndArgs(argv);
-    char *data = strClone(combineResult);0
-    add_last(list, data);
+    char *data = combineCommandAndArgs(argv);
+    if (data)
+    {
+        add_last(list, data);
+        return 1;
+    }
     return 0;
 }
