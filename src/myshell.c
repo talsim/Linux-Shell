@@ -132,8 +132,16 @@ int saveCommand(List *list, const char **argv)
     char *data = combineCommandAndArgs(argv);
     if (data)
     {
-        add_last(list, data);
-        return 1;
+        if (is_empty(list))
+        {
+            add_last(list, data);
+        }
+        else
+        {
+            if (!isCommand(argv[0], get_last(list)))
+                add_last(list, data);
+        }
+        return 0;
     }
-    return 0;
+    return -1;
 }
