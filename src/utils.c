@@ -38,7 +38,7 @@ int isQuit(char *command)
     return 0;
 }
 
-int isCommand(char *command, char *compareTo)
+int isCommand(const char *command, char *compareTo)
 {
     return strcmp(command, compareTo) == 0;
 }

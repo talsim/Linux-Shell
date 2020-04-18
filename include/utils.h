@@ -17,7 +17,7 @@ void printDirectory();
 
 /*Compares the two given commands*/
 /*Returns 1 if both are equal, 0 otherwise*/
-int isCommand(char *command, char *compareTo);
+int isCommand(const char *command, char *compareTo);
 
 /*Concatenates command and arguments in the given argv*/
 /*Returns a pointer to the concatenated string on the heap, NULL otherwise*/
