@@ -42,10 +42,14 @@ int main(int argc, char **argv)
                     changeCwd(parsedLine);
 
                 else if (isCommand(command, "history"))
-                {
-                    printf("history:\n");
                     print_list(history);
+
+                else if (command[0] == '!')
+                {
+                    int index = atoi(command + 1);
+                    invokeCommandByIndex(history, index);
                 }
+
                 else
                     execute(parsedLine);
             }
@@ -129,6 +133,8 @@ int waitForChild(pid_t pid)
 
 int saveCommand(List *list, const char **argv)
 {
+    const char *command = argv[0];
+    if (command[0] == '!') return 0; // just return and let invokeCommandByIndex call you
     char *data = combineCommandAndArgs(argv);
     if (data)
     {
@@ -142,6 +148,20 @@ int saveCommand(List *list, const char **argv)
                 add_last(list, data);
         }
         return 0;
+    }
+    return -1;
+}
+
+int invokeCommandByIndex(List *list, int index)
+{
+    char *data = get(list, index);
+    if (data)
+    {
+        cmdLine *line = parseCmdLines(data);
+        saveCommand(list, line->arguments);
+        printf("%s\n", data); // print command to console before running it
+        int execResult = execute(line);
+        if (execResult) return 0;
     }
     return -1;
 }
