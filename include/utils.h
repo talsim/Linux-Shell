@@ -22,3 +22,6 @@ int isCommand(const char *command, char *compareTo);
 /*Concatenates command and arguments in the given argv*/
 /*Returns a pointer to the concatenated string on the heap, NULL otherwise*/
 char *combineCommandAndArgs(const char **argv);
+
+/**/
+int isNumber(char *str);

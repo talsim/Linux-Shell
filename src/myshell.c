@@ -46,8 +46,15 @@ int main(int argc, char **argv)
 
                 else if (command[0] == '!')
                 {
-                    int index = atoi(command + 1);
-                    invokeCommandByIndex(history, index);
+                    char *input = command + 1;
+                    if (isNumber(input))
+                    {
+                        int index = atoi(input);
+                        invokeCommandByIndex(history, index);
+                    }
+                    else
+                        printf("Error: please enter an index\n");
+                    
                 }
 
                 else
@@ -131,37 +138,39 @@ int waitForChild(pid_t pid)
     return 0;
 }
 
-int saveCommand(List *list, const char **argv)
+int saveCommand(List *history, const char **argv)
 {
     const char *command = argv[0];
-    if (command[0] == '!') return 0; // just return and let invokeCommandByIndex call you
+    if (command[0] == '!')
+        return 0; // just return and let invokeCommandByIndex call you
     char *data = combineCommandAndArgs(argv);
     if (data)
     {
-        if (is_empty(list))
+        if (is_empty(history))
         {
-            add_last(list, data);
+            add_last(history, data);
         }
         else
         {
-            if (!isCommand(argv[0], get_last(list)))
-                add_last(list, data);
+            if (!isCommand(argv[0], get_last(history)))
+                add_last(history, data);
         }
         return 0;
     }
     return -1;
 }
 
-int invokeCommandByIndex(List *list, int index)
+int invokeCommandByIndex(List *history, int index)
 {
-    char *data = get(list, index);
+    char *data = get(history, index);
     if (data)
     {
         cmdLine *line = parseCmdLines(data);
-        saveCommand(list, line->arguments);
+        saveCommand(history, line->arguments);
         printf("%s\n", data); // print command to console before running it
         int execResult = execute(line);
-        if (execResult) return 0;
+        if (execResult)
+            return 0;
     }
     return -1;
 }
