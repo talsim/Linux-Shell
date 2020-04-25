@@ -163,10 +163,7 @@ char* get_last(List *self)
 char* get(List *self, int index)
 {
 	if (is_index_out_of_bounds(self, index))
-	{
-		fprintf(stderr, "Error: linked list out of bounds!\n");
 		return NULL;
-	}
 	int count = 0;
 	Node *curr = self->start;
 	while (curr != NULL)
