@@ -47,16 +47,14 @@ int main(int argc, char **argv)
                 else if (command[0] == '!')
                 {
                     char *input = command + 1;
-                    if (isNumber(input))
+                    if (isInteger(input))
                     {
                         int index = atoi(input);
                         invokeCommandByIndex(history, index);
                     }
                     else
-                        printf("Error: please enter an index\n");
-                    
+                        printErrMsg(command, "event not found");
                 }
-
                 else
                     execute(parsedLine);
             }
@@ -90,14 +88,14 @@ int execute(cmdLine *line)
         int status = executeSingleCommand(line);
         if (status != 1)
         {
-            printErrMsg(line->arguments[0]);
+            printErrMsg(line->arguments[0], NULL);
             _exit(EXIT_FAILURE);
         }
         break;
     }
     case -1:
         // fork failed
-        printErrMsg("fork");
+        printErrMsg("fork", NULL);
         return -1;
     default:
         // runs on parent proccess:
@@ -120,7 +118,7 @@ int changeCwd(cmdLine *line)
         int chdirResult = chdir(line->arguments[1]);
         if (chdirResult != 0)
         {
-            printErrMsg("cd");
+            printErrMsg("cd", NULL);
             return -1;
         }
     }

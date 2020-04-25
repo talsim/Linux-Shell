@@ -1,5 +1,6 @@
-/*Prints error message of the given command*/
-void printErrMsg(char *command);
+/*Prints error message of the given command, using errno.*/
+/*Else, prints errorMsg*/
+void printErrMsg(char *command, char *errorMsg);
 
 /*Checks if the command is 'quit' or 'exit'*/
 /*Returns 1 if the given command is an exit command, otherwise, returns 0*/
@@ -23,5 +24,6 @@ int isCommand(const char *command, char *compareTo);
 /*Returns a pointer to the concatenated string on the heap, NULL otherwise*/
 char *combineCommandAndArgs(const char **argv);
 
-/**/
-int isNumber(char *str);
+/*Checks if str is an integer*/
+/*Returns 1 if true, 0 elsewise*/
+int isInteger(char *str);

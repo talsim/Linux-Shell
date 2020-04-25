@@ -17,9 +17,12 @@ extern char *programName;
 #define BOLD_RED "\x1B[1;31m"
 #define RESET "\x1B[0m"
 
-void printErrMsg(char *command)
+void printErrMsg(char *command, char *errorMsg)
 {
-    fprintf(stderr, "%s: %s: " BOLD_RED "%s\n" RESET, programName, command, strerror(errno));
+    if (errorMsg == NULL)
+        fprintf(stderr, "%s: %s: " BOLD_RED "%s\n" RESET, programName, command, strerror(errno));
+    else // print errorMsg
+        fprintf(stderr, "%s: %s: " BOLD_RED "%s\n", programName, command, errorMsg);
 }
 
 void isDebug(char **argv)
@@ -84,7 +87,7 @@ char *combineCommandAndArgs(const char **argv)
     return NULL;
 }
 
-int isNumber(char *str)
+int isInteger(char *str)
 {
     for (int i = 0; i < strlen(str); i++)
     {
@@ -93,6 +96,5 @@ int isNumber(char *str)
             return 0;
         }
     }
-
     return 1;
 }
