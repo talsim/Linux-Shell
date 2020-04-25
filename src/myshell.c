@@ -37,26 +37,7 @@ int main(int argc, char **argv)
             if (!isQuit(command)) // if user entered a command
             {
                 saveCommand(history, parsedLine->arguments);
-
-                if (isCommand(command, "cd")) // if the command is "cd"
-                    changeCwd(parsedLine);
-
-                else if (isCommand(command, "history"))
-                    print_list(history);
-
-                else if (command[0] == '!')
-                {
-                    char *input = command + 1;
-                    if (isInteger(input))
-                    {
-                        int index = atoi(input);
-                        invokeCommandByIndex(history, index);
-                    }
-                    else
-                        printErrMsg(command, "event not found");
-                }
-                else
-                    execute(parsedLine);
+                execute(parsedLine, history);
             }
             else
             {
@@ -70,105 +51,15 @@ int main(int argc, char **argv)
     return EXIT_SUCCESS;
 }
 
-int executeSingleCommand(cmdLine *pCmdLine)
+int execute(cmdLine *line, List *history)
 {
-    char *command = pCmdLine->arguments[0];
-    execvp(command, pCmdLine->arguments);
-    return 0; // execvp failed if code reaches this line
-}
-
-int execute(cmdLine *line)
-{
-    pid_t pid = fork();
-    switch (pid)
+    if (isBuiltin(line->arguments[0]))
     {
-    case 0:
-    {
-        // runs on child proccess:
-        int status = executeSingleCommand(line);
-        if (status != 1)
-        {
-            printErrMsg(line->arguments[0], NULL);
-            _exit(EXIT_FAILURE);
-        }
-        break;
+        executeBuiltin(line, history);
     }
-    case -1:
-        // fork failed
-        printErrMsg("fork", NULL);
-        return -1;
-    default:
-        // runs on parent proccess:
-        if (line->blocking == 1) // if ampersand isn't added, wait for child to finish
-            waitForChild(pid);
-        if (debug)
-        {
-            fprintf(stderr, "Forked, parent proccess id: %d\n", getpid());
-            fprintf(stderr, "Child proccess id: %d\n", pid);
-            fprintf(stderr, "Executing command: %s\n", line->arguments[0]);
-        }
+    else
+    {
+        executeFromBin(line);
     }
     return 0;
-}
-
-int changeCwd(cmdLine *line)
-{
-    if (line->argCount > 1)
-    {
-        int chdirResult = chdir(line->arguments[1]);
-        if (chdirResult != 0)
-        {
-            printErrMsg("cd", NULL);
-            return -1;
-        }
-    }
-    return 0;
-}
-
-int waitForChild(pid_t pid)
-{
-    int waitpidResult = waitpid(pid, NULL, 0);
-    if (waitpidResult != pid)
-    {
-        fprintf(stderr, "%s: waitpid: %s\n", programName, strerror(errno));
-        return -1;
-    }
-    return 0;
-}
-
-int saveCommand(List *history, const char **argv)
-{
-    const char *command = argv[0];
-    if (command[0] == '!')
-        return 0; // just return and let invokeCommandByIndex call you
-    char *data = combineCommandAndArgs(argv);
-    if (data)
-    {
-        if (is_empty(history))
-        {
-            add_last(history, data);
-        }
-        else
-        {
-            if (!isCommand(argv[0], get_last(history)))
-                add_last(history, data);
-        }
-        return 0;
-    }
-    return -1;
-}
-
-int invokeCommandByIndex(List *history, int index)
-{
-    char *data = get(history, index);
-    if (data)
-    {
-        cmdLine *line = parseCmdLines(data);
-        saveCommand(history, line->arguments);
-        printf("%s\n", data); // print command to console before running it
-        int execResult = execute(line);
-        if (execResult)
-            return 0;
-    }
-    return -1;
 }

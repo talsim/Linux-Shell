@@ -27,3 +27,24 @@ char *combineCommandAndArgs(const char **argv);
 /*Checks if str is an integer*/
 /*Returns 1 if true, 0 elsewise*/
 int isInteger(char *str);
+
+/*Waits for the child proccess to finish*/
+/*Returns 0 on success, -1 otherwise*/
+int waitForChild(pid_t pid);
+
+/*Saves the command and the arguments the user inputed*/
+/*Returns 0 on success, -1 on failure*/
+int saveCommand(List *list, const char **argv);
+
+/**/
+int executeFromBin(cmdLine *line);
+
+/**/
+void executeBuiltin(cmdLine *parsedLine, List *history);
+
+/*Executes the given command*/
+/*Returns 0 if failed*/
+int executeSingleCommand(cmdLine *pCmdLine);
+
+/**/
+int isBuiltin(char *command);
