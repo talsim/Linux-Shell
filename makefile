@@ -7,8 +7,8 @@ INCLUDE=./include/
 all: myshell
 
 # Tool invocations
-myshell: myshell.o LineParser.o LinkedList.o utils.o
-	gcc -g -Wall -o myshell $(BIN)/myshell.o $(BIN)/LineParser.o $(BIN)/LinkedList.o $(BIN)/utils.o
+myshell: myshell.o LineParser.o LinkedList.o utils.o BuiltinCommands.o
+	gcc -g -Wall -o myshell $(BIN)/myshell.o $(BIN)/LineParser.o $(BIN)/LinkedList.o $(BIN)/utils.o $(BIN)/BuiltinCommands.o
 
 # Depends on the source and header files
 LineParser.o: $(SOURCE)/LineParser.c $(INCLUDE)/LineParser.h
@@ -23,6 +23,9 @@ LinkedList.o: $(SOURCE)/LinkedList.c $(INCLUDE)/LinkedList.h
 
 utils.o: $(SOURCE)/utils.c $(INCLUDE)/utils.h
 	gcc -g -Wall -c $(SOURCE)/utils.c -o $(BIN)/utils.o
+
+BuiltinCommands.o: $(SOURCE)/BuiltinCommands.c $(INCLUDE)/BuiltinCommands.h
+	gcc -g -Wall -c $(SOURCE)/BuiltinCommands.c -o $(BIN)/BuiltinCommands.o
 
 #tell make that "clean" is not a file name!
 .PHONY: clean run
