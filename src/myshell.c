@@ -13,15 +13,11 @@
 
 #define MAX_INPUT_SIZE 2048
 
-int debug = 0;
 char *programName = "";
 
 int main(int argc, char **argv)
 {
     programName = argv[0] + 2; // argv[0] + 2 = program name without "./"
-
-    if (argc > 1)
-        isDebug(argv);
 
     List *history = create_list();
 

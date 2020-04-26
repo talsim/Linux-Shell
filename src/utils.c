@@ -11,7 +11,6 @@
 #include "../include/utils.h"
 #include "../include/BuiltinCommands.h"
 
-extern int debug;
 extern char *programName;
 
 // Ansi color codes
@@ -25,15 +24,6 @@ void printErrMsg(char *command, char *errorMsg)
         fprintf(stderr, "%s: %s: " BOLD_RED "%s\n" RESET, programName, command, strerror(errno));
     else // print errorMsg
         fprintf(stderr, "%s: %s: " BOLD_RED "%s\n", programName, command, errorMsg);
-}
-
-void isDebug(char **argv)
-{
-    if (isCommand(argv[1], "-d"))
-    {
-        debug = 1;
-        printf("Debug mode enabled\n");
-    }
 }
 
 int isQuit(char *command)
@@ -106,7 +96,7 @@ int waitForChild(pid_t pid)
     int waitpidResult = waitpid(pid, NULL, 0);
     if (waitpidResult != pid)
     {
-        fprintf(stderr, "%s: waitpid: %s\n", programName, strerror(errno));
+        printErrMsg("waitpid", NULL);
         return -1;
     }
     return 0;
@@ -158,12 +148,6 @@ int executeFromBin(cmdLine *line)
         // runs on parent proccess:
         if (line->blocking == 1) // if ampersand isn't added, wait for child to finish
             waitForChild(pid);
-        if (debug)
-        {
-            fprintf(stderr, "Forked, parent proccess id: %d\n", getpid());
-            fprintf(stderr, "Child proccess id: %d\n", pid);
-            fprintf(stderr, "Executing command: %s\n", line->arguments[0]);
-        }
     }
     return 0;
 }
