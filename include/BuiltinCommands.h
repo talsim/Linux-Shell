@@ -4,4 +4,7 @@ int changeCwd(cmdLine *line);
 
 /*Invokes the command in the history at the given index*/
 /*Returns 0 on success, -1 on failure*/
-int invokeCommandByIndex(List *list, int index);
+int invokeCommandByIndex(List *history, int index);
+
+/* */
+void printHistory(List *history);

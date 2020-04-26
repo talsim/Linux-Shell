@@ -171,11 +171,11 @@ int executeFromBin(cmdLine *line)
 void executeBuiltin(cmdLine *parsedLine, List *history)
 {
     char *command = parsedLine->arguments[0];
-    if (isCommand(command, "cd")) // if the command is "cd"
+    if (isCommand(command, "cd"))
         changeCwd(parsedLine);
 
     else if (isCommand(command, "history"))
-        print_list(history);
+        printHistory(history);
 
     else if (command[0] == '!')
     {

@@ -39,3 +39,9 @@ int invokeCommandByIndex(List *history, int index)
     }
     return -1;
 }
+
+void printHistory(List *history)
+{
+    for (int i = 0; i < history->size; i++)
+        printf("%d %s\n", i, get(history, i));
+}
