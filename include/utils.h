@@ -16,10 +16,6 @@ void printDirectory();
 /*Returns 1 if both are equal, 0 otherwise*/
 int isCommand(const char *command, char *compareTo);
 
-/*Concatenates command and arguments in the given argv*/
-/*Returns a pointer to the concatenated string on the heap, NULL otherwise*/
-char *combineCommandAndArgs(const char **argv);
-
 /*Checks if str is an integer*/
 /*Returns 1 if true, 0 elsewise*/
 int isInteger(char *str);
@@ -30,7 +26,7 @@ int waitForChild(pid_t pid);
 
 /*Saves the command and the arguments the user inputed*/
 /*Returns 0 on success, -1 on failure*/
-int saveCommand(List *list, const char **argv);
+int saveCommand(List *list, char* const argv[MAX_ARGUMENTS]);
 
 /**/
 int executeFromBin(cmdLine *line);

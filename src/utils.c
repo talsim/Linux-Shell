@@ -18,6 +18,10 @@ extern char *programName;
 #define BOLD_RED "\x1B[1;31m"
 #define RESET "\x1B[0m"
 
+/*Concatenates command and arguments in the given argv*/
+/*Returns a pointer to the concatenated string on the heap, NULL otherwise*/
+static char *combineCommandAndArgs(char* const argv[MAX_ARGUMENTS]);
+
 void printErrMsg(char *command, char *errorMsg)
 {
     if (errorMsg == NULL)
@@ -58,13 +62,13 @@ void printDirectory()
     }
 }
 
-char *combineCommandAndArgs(const char **argv)
+static char *combineCommandAndArgs(char *const argv[MAX_ARGUMENTS])
 {
     char *ans = (char *)malloc(strlen(argv[0]) + 1); // allocate argv[0] bytes on heap memory
     if (ans)
     {
         strcpy(ans, argv[0]);
-        const char **args = argv + 1;
+        char* const* args = argv + 1;
         int maxArgsLength = 255; // in LineParser -> max length of argv = 256
 
         for (int i = 0; i < maxArgsLength; i++)
@@ -102,7 +106,7 @@ int waitForChild(pid_t pid)
     return 0;
 }
 
-int saveCommand(List *history, const char **argv)
+int saveCommand(List *history, char *const argv[MAX_ARGUMENTS])
 {
     const char *command = argv[0];
     if (command[0] == '!')
@@ -118,6 +122,8 @@ int saveCommand(List *history, const char **argv)
         {
             if (!isCommand(argv[0], get_last(history)))
                 add_last(history, data);
+            else
+                free(data);
         }
         return 0;
     }
