@@ -132,6 +132,7 @@ void free_list(List *self)
 	{
 		tmp = curr;
 		curr = curr->next;
+		free(tmp->data);
 		free(tmp);
 	}
 }
