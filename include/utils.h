@@ -6,6 +6,10 @@ void printErrMsg(char *command, char *errorMsg);
 /*Returns 1 if the given command is an exit command, otherwise, returns 0*/
 int isQuit(char *command);
 
+/*Checks if command is builtin*/
+/*Returns 1 if builtin, 0 otherwise*/
+int isBuiltin(char *command);
+
 /*fgets without reading newline character*/
 char *readLine(char *str, int n, FILE *stream);
 
@@ -28,15 +32,17 @@ int waitForChild(pid_t pid);
 /*Returns 0 on success, -1 on failure*/
 int saveCommand(List *list, char* const argv[MAX_ARGUMENTS]);
 
-/**/
+/*Executes line on child proccess*/
+/*Returns 0 on success, -1 on failure*/
 int executeFromBin(cmdLine *line);
 
-/**/
+/*Executes builtin command on parent process*/
 void executeBuiltin(cmdLine *parsedLine, List *history);
 
 /*Executes the given command*/
 /*Returns 0 if failed*/
 int executeSingleCommand(cmdLine *pCmdLine);
 
-/**/
-int isBuiltin(char *command);
+/*Checks if the given string is empty*/
+/*Returns 1 if true, 0 elsewise*/
+int isempty(const char *s);
