@@ -196,3 +196,13 @@ int isBuiltin(char *command)
         return 1;
     return 0;
 }
+
+int isempty(const char *s)
+{
+  while (*s) {
+    if (!isspace(*s))
+      return 0;
+    s++;
+  }
+  return 1;
+}
