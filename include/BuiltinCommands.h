@@ -6,5 +6,5 @@ int changeCwd(cmdLine *line);
 /*Returns 0 on success, -1 on failure*/
 int invokeCommandByIndex(List *history, int index);
 
-/* */
+/*Prints history in Linux printing style*/
 void printHistory(List *history);
