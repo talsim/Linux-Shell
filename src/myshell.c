@@ -18,7 +18,7 @@ char *programName = "";
 int main(int argc, char **argv)
 {
     programName = argv[0] + 2; // argv[0] + 2 = program name without "./"
-
+    
     List *history = create_list();
 
     char buffer[MAX_INPUT_SIZE] = "";
@@ -26,7 +26,7 @@ int main(int argc, char **argv)
     {
         printDirectory();
         readLine(buffer, MAX_INPUT_SIZE, stdin);
-        if (!isCommand(buffer, ""))
+        if (!isempty(buffer))
         {
             cmdLine *parsedLine = parseCmdLines(buffer);
             char *command = parsedLine->arguments[0];
@@ -38,9 +38,9 @@ int main(int argc, char **argv)
             else
             {
                 free_list(history);
-                exit(EXIT_SUCCESS);
+                freeCmdLines(parsedLine);
+                break;
             }
-
             freeCmdLines(parsedLine);
         }
     }
