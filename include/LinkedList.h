@@ -56,10 +56,10 @@ void print_list(List *self);
 /*Free the list from heap memory.*/
 void free_list(List *self);
 
-/*Returns true if val contains in list, false elsewise.*/
+/*Returns 1 if val contains in list, 0 elsewise.*/
 int contains(List *self, char* val);
 
-/*Returns true is list is empty, false elsewise.*/
+/*Returns 1 if list is empty, 0 elsewise.*/
 int is_empty(List *self);
 
 /*Clone the list.*/
