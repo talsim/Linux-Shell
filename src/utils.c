@@ -64,14 +64,14 @@ void printDirectory()
 
 static char *combineCommandAndArgs(char *const argv[MAX_ARGUMENTS])
 {
-    char *ans = (char *)malloc(strlen(argv[0]) + 1); // allocate argv[0] bytes on heap memory
+    size_t commandAndArgs = getCommandAndArgsLength(argv);
+    char *ans = (char *)malloc(commandAndArgs + 1); //
     if (ans)
     {
         strcpy(ans, argv[0]);
         char* const* args = argv + 1;
-        int maxArgsLength = 255; // in LineParser -> max length of argv = 256
 
-        for (int i = 0; i < maxArgsLength; i++)
+        for (int i = 1; i < MAX_ARGUMENTS; i++)
         {
             if (args[i] == NULL)
                 break;
@@ -199,10 +199,23 @@ int isBuiltin(char *command)
 
 int isempty(const char *s)
 {
-  while (*s) {
+  while (*s) 
+  {
     if (!isspace(*s))
       return 0;
     s++;
   }
   return 1;
+}
+
+size_t getCommandAndArgsLength(char *const argv[MAX_ARGUMENTS])
+{
+    size_t commandAndArgs = strlen(argv[0]); // equal to command length
+    for (int i = 1; i < MAX_ARGUMENTS; i++)
+    {
+        if (argv[i] == NULL)
+            break;
+        commandAndArgs += strlen(argv[i]); // adding every argument length
+    }
+    return commandAndArgs;
 }

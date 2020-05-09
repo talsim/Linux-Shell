@@ -46,3 +46,6 @@ int executeSingleCommand(cmdLine *pCmdLine);
 /*Checks if the given string is empty*/
 /*Returns 1 if true, 0 elsewise*/
 int isempty(const char *s);
+
+/*Returns command and arguments total length*/
+size_t getCommandAndArgsLength(char *const argv[MAX_ARGUMENTS]);
