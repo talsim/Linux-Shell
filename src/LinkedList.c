@@ -131,6 +131,7 @@ void free_list(List *self)
 		free(tmp->data);
 		free(tmp);
 	}
+	free(self);
 }
 
 char* get_first(List* self)
