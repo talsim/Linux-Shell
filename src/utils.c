@@ -18,10 +18,6 @@ extern char *programName;
 #define BOLD_RED "\x1B[1;31m"
 #define RESET "\x1B[0m"
 
-/*Concatenates command and arguments in the given argv*/
-/*Returns a pointer to the concatenated string on the heap, NULL otherwise*/
-static char *combineCommandAndArgs(char* const argv[MAX_ARGUMENTS]);
-
 void printErrMsg(char *command, char *errorMsg)
 {
     if (errorMsg == NULL)
@@ -62,27 +58,6 @@ void printDirectory()
     }
 }
 
-static char *combineCommandAndArgs(char *const argv[MAX_ARGUMENTS])
-{
-    size_t commandAndArgs = getCommandAndArgsLength(argv);
-    char *ans = (char *)malloc(commandAndArgs + 1); //
-    if (ans)
-    {
-        strcpy(ans, argv[0]);
-        char* const* args = argv + 1;
-
-        for (int i = 1; i < MAX_ARGUMENTS; i++)
-        {
-            if (args[i] == NULL)
-                break;
-            strcat(ans, " ");
-            strcat(ans, args[i]);
-        }
-        return ans;
-    }
-    return NULL;
-}
-
 int isInteger(char *str)
 {
     for (int i = 0; i < strlen(str); i++)
@@ -106,21 +81,23 @@ int waitForChild(pid_t pid)
     return 0;
 }
 
-int saveCommand(List *history, char *const argv[MAX_ARGUMENTS])
+int saveCommand(List *history, char buffer[2048], char *const argv[MAX_ARGUMENTS])
 {
     const char *command = argv[0];
     if (command[0] == '!')
-        return 0; // just return and let invokeCommandByIndex call you
-    char *data = combineCommandAndArgs(argv);
+        return 0;                                    // just return and let invokeCommandByIndex call you
+    char *data = (char *)malloc(strlen(buffer) + 1); // combineCommandAndArgs(argv);
     if (data)
     {
+        strcpy(data, buffer);
+
         if (is_empty(history))
         {
             add_last(history, data);
         }
         else
         {
-            if (!isCommand(argv[0], get_last(history)))
+            if (!isCommand(command, get_last(history)))
                 add_last(history, data);
             else
                 free(data);
@@ -158,7 +135,7 @@ int executeFromBin(cmdLine *line)
     return 0;
 }
 
-void executeBuiltin(cmdLine *parsedLine, List *history)
+void executeBuiltin(cmdLine *parsedLine, char buffer[2048], List *history)
 {
     char *command = parsedLine->arguments[0];
     if (isCommand(command, "cd"))
@@ -173,7 +150,8 @@ void executeBuiltin(cmdLine *parsedLine, List *history)
         if (isInteger(input))
         {
             int index = atoi(input);
-            if (invokeCommandByIndex(history, index) == -1)
+            int result = invokeCommandByIndex(history, buffer, index);
+            if (result == -1)
                 printErrMsg(command, "event not found");
         }
         else
@@ -199,23 +177,11 @@ int isBuiltin(char *command)
 
 int isempty(const char *s)
 {
-  while (*s) 
-  {
-    if (!isspace(*s))
-      return 0;
-    s++;
-  }
-  return 1;
-}
-
-size_t getCommandAndArgsLength(char *const argv[MAX_ARGUMENTS])
-{
-    size_t commandAndArgs = strlen(argv[0]); // equal to command length
-    for (int i = 1; i < MAX_ARGUMENTS; i++)
+    while (*s)
     {
-        if (argv[i] == NULL)
-            break;
-        commandAndArgs += strlen(argv[i]); // adding every argument length
+        if (!isspace(*s))
+            return 0;
+        s++;
     }
-    return commandAndArgs;
+    return 1;
 }
