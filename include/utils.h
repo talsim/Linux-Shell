@@ -30,14 +30,14 @@ int waitForChild(pid_t pid);
 
 /*Saves the command and the arguments the user inputed*/
 /*Returns 0 on success, -1 on failure*/
-int saveCommand(List *list, char* const argv[MAX_ARGUMENTS]);
+int saveCommand(List *history, char buffer[2048], char *const argv[MAX_ARGUMENTS]);
 
 /*Executes line on child proccess*/
 /*Returns 0 on success, -1 on failure*/
 int executeFromBin(cmdLine *line);
 
 /*Executes builtin command on parent process*/
-void executeBuiltin(cmdLine *parsedLine, List *history);
+void executeBuiltin(cmdLine *parsedLine, char buffer[2048], List *history);
 
 /*Executes the given command*/
 /*Returns 0 if failed*/
@@ -46,6 +46,3 @@ int executeSingleCommand(cmdLine *pCmdLine);
 /*Checks if the given string is empty*/
 /*Returns 1 if true, 0 elsewise*/
 int isempty(const char *s);
-
-/*Returns command and arguments total length*/
-size_t getCommandAndArgsLength(char *const argv[MAX_ARGUMENTS]);
