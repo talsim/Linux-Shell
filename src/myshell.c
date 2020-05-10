@@ -18,7 +18,7 @@ char *programName = "";
 int main(int argc, char **argv)
 {
     programName = argv[0] + 2; // argv[0] + 2 = program name without "./"
-    
+
     List *history = create_list();
 
     char buffer[MAX_INPUT_SIZE] = "";
@@ -32,8 +32,8 @@ int main(int argc, char **argv)
             char *command = parsedLine->arguments[0];
             if (!isQuit(command)) // if user entered a command
             {
-                saveCommand(history, parsedLine->arguments);
-                execute(parsedLine, history);
+                saveCommand(history, buffer, parsedLine->arguments);
+                execute(parsedLine, buffer, history);
             }
             else
             {
@@ -47,11 +47,11 @@ int main(int argc, char **argv)
     return EXIT_SUCCESS;
 }
 
-int execute(cmdLine *line, List *history)
+int execute(cmdLine *line, char buffer[MAX_INPUT_SIZE], List *history)
 {
     if (isBuiltin(line->arguments[0]))
     {
-        executeBuiltin(line, history);
+        executeBuiltin(line, buffer, history);
     }
     else
     {
