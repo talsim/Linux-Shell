@@ -25,15 +25,16 @@ int changeCwd(cmdLine *line)
     return 0;
 }
 
-int invokeCommandByIndex(List *history, int index)
+int invokeCommandByIndex(List *history, char buffer[2048], int index)
 {
     char *data = get(history, index);
     if (data)
     {
         cmdLine *line = parseCmdLines(data);
-        saveCommand(history, line->arguments);
+        saveCommand(history, buffer, line->arguments);
         printf("%s\n", data); // print command to console before running it
-        int execResult = execute(line, history);
+        int execResult = execute(line, buffer, history);
+        freeCmdLines(line);
         if (execResult == 0)
             return 0;
     }
