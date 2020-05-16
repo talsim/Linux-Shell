@@ -43,6 +43,10 @@ void executeBuiltin(cmdLine *parsedLine, char buffer[2048], List *history);
 /*Returns 0 if failed*/
 int executeSingleCommand(cmdLine *pCmdLine);
 
+/*Forks and executes the command on the child proccess*/
+/*Returns 0 if it was successful, else, returns -1*/
+int execute(cmdLine *line, char buffer[2048], List *history);
+
 /*Checks if the given string is empty*/
 /*Returns 1 if true, 0 elsewise*/
 int isempty(const char *s);

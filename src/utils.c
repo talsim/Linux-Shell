@@ -18,6 +18,8 @@ extern char *programName;
 #define BOLD_RED "\x1B[1;31m"
 #define RESET "\x1B[0m"
 
+#define MAX_INPUT_SIZE 2048
+
 void printErrMsg(char *command, char *errorMsg)
 {
     if (errorMsg == NULL)
@@ -81,7 +83,7 @@ int waitForChild(pid_t pid)
     return 0;
 }
 
-int saveCommand(List *history, char buffer[2048], char *const argv[MAX_ARGUMENTS])
+int saveCommand(List *history, char buffer[MAX_INPUT_SIZE], char *const argv[MAX_ARGUMENTS])
 {
     const char *command = argv[0];
     if (command[0] == '!')
@@ -135,7 +137,7 @@ int executeFromBin(cmdLine *line)
     return 0;
 }
 
-void executeBuiltin(cmdLine *parsedLine, char buffer[2048], List *history)
+void executeBuiltin(cmdLine *parsedLine, char buffer[MAX_INPUT_SIZE], List *history)
 {
     char *command = parsedLine->arguments[0];
     if (isCommand(command, "cd"))
@@ -164,6 +166,19 @@ int executeSingleCommand(cmdLine *pCmdLine)
     char *command = pCmdLine->arguments[0];
     execvp(command, pCmdLine->arguments);
     return 0; // execvp failed if code reaches this line
+}
+
+int execute(cmdLine *line, char buffer[MAX_INPUT_SIZE], List *history)
+{
+    if (isBuiltin(line->arguments[0]))
+    {
+        executeBuiltin(line, buffer, history);
+    }
+    else
+    {
+        executeFromBin(line);
+    }
+    return 0;
 }
 
 int isBuiltin(char *command)

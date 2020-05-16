@@ -9,7 +9,6 @@
 #include "../include/LineParser.h"
 #include "../include/LinkedList.h"
 #include "../include/utils.h"
-#include "../include/myshell.h"
 
 #define MAX_INPUT_SIZE 2048
 
@@ -45,17 +44,4 @@ int main(int argc, char **argv)
         }
     }
     return EXIT_SUCCESS;
-}
-
-int execute(cmdLine *line, char buffer[MAX_INPUT_SIZE], List *history)
-{
-    if (isBuiltin(line->arguments[0]))
-    {
-        executeBuiltin(line, buffer, history);
-    }
-    else
-    {
-        executeFromBin(line);
-    }
-    return 0;
 }

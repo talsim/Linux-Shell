@@ -9,7 +9,6 @@
 #include "../include/LineParser.h"
 #include "../include/LinkedList.h"
 #include "../include/utils.h"
-#include "../include/myshell.h"
 
 int changeCwd(cmdLine *line)
 {
