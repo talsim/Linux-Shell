@@ -8,7 +8,7 @@ all: myshell
 
 # Tool invocations
 myshell: myshell.o LineParser.o LinkedList.o utils.o BuiltinCommands.o
-	gcc -g -Wall -o myshell $(BIN)/myshell.o $(BIN)/LineParser.o $(BIN)/LinkedList.o $(BIN)/utils.o $(BIN)/BuiltinCommands.o
+	gcc -g -Wall -o myshell $(BIN)/myshell.o $(BIN)/LineParser.o $(BIN)/LinkedList.o $(BIN)/utils.o $(BIN)/BuiltinCommands.o -lreadline -ltinfo
 
 # Depends on the source and header files
 LineParser.o: $(SOURCE)/LineParser.c $(INCLUDE)/LineParser.h
