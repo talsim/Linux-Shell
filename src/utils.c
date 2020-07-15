@@ -40,24 +40,17 @@ int isCommand(const char *command, char *compareTo)
     return strcmp(command, compareTo) == 0;
 }
 
-char *readLine(char *str, int n, FILE *stream)
-{
-    char *ans = fgets(str, n, stream);
-    if (ans == NULL)
-        return NULL;
-    int newlineIndex = strcspn(str, "\n");
-    str[newlineIndex] = 0;
-    return str;
-}
-
-void printDirectory()
+char *getFormattedCwd()
 {
     char cwd[100] = "";
     if (getcwd(cwd, sizeof(cwd)) != NULL)
     {
-        char *pCwd = cwd + 1;
-        printf(BOLD_BLUE "%s" RESET "# ", pCwd); // Linux printing style
+        size_t formattedCwdSize = sizeof(cwd) + 50;
+        char *formattedCwd = malloc(formattedCwdSize);
+        snprintf(formattedCwd, formattedCwdSize, BOLD_BLUE "%s" RESET "# ", cwd); // Linux shell printing style
+        return formattedCwd;
     }
+    return NULL;
 }
 
 int isInteger(char *str)

@@ -10,11 +10,8 @@ int isQuit(char *command);
 /*Returns 1 if builtin, 0 otherwise*/
 int isBuiltin(char *command);
 
-/*fgets without reading newline character*/
-char *readLine(char *str, int n, FILE *stream);
-
-/*Prints current working directory in Linux printing style*/
-void printDirectory();
+/*Returns cwd in Linux shell printing style*/
+char *getFormattedCwd();
 
 /*Compares the two given commands*/
 /*Returns 1 if both are equal, 0 otherwise*/
