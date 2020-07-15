@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include <errno.h>
 #include <stdio.h>
+#include <readline/readline.h>
 #include "../include/LineParser.h"
 #include "../include/LinkedList.h"
 #include "../include/utils.h"
@@ -20,27 +21,32 @@ int main(int argc, char **argv)
 
     List *history = create_list();
 
-    char buffer[MAX_INPUT_SIZE] = "";
+    char *buf = NULL;
     while (1)
     {
-        printDirectory();
-        readLine(buffer, MAX_INPUT_SIZE, stdin);
-        if (!isempty(buffer))
+        char *cwd = getFormattedCwd();
+        buf = readline(cwd);
+
+        free(cwd);
+
+        if (!isempty(buf))
         {
-            cmdLine *parsedLine = parseCmdLines(buffer);
+            cmdLine *parsedLine = parseCmdLines(buf);
             char *command = parsedLine->arguments[0];
             if (!isQuit(command)) // if user entered a command
             {
-                saveCommand(history, buffer, parsedLine->arguments);
-                execute(parsedLine, buffer, history);
+                saveCommand(history, buf, parsedLine->arguments);
+                execute(parsedLine, buf, history);
             }
             else
             {
                 free_list(history);
                 freeCmdLines(parsedLine);
+                free(buf);
                 break;
             }
             freeCmdLines(parsedLine);
+            free(buf);
         }
     }
     return EXIT_SUCCESS;
