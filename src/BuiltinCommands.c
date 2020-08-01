@@ -30,7 +30,7 @@ int invokeCommandByIndex(List *history, char buffer[2048], int index)
     if (data)
     {
         cmdLine *line = parseCmdLines(data);
-        saveCommand(history, buffer, line->arguments);
+        saveCommand(history, data, line->arguments);
         printf("%s\n", data); // print command to console before running it
         int execResult = execute(line, buffer, history);
         freeCmdLines(line);
