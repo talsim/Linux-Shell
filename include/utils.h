@@ -36,6 +36,8 @@ int executeFromBin(cmdLine *line);
 /*Executes builtin command on parent process*/
 void executeBuiltin(cmdLine *parsedLine, char buffer[2048], List *history);
 
+int executeEnvCommands(char *command, cmdLine *parsedLine, List *envVars);
+
 /*Executes the given command*/
 /*Returns 0 if failed*/
 int executeSingleCommand(cmdLine *pCmdLine);

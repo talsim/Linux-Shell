@@ -3,8 +3,8 @@
 #include <string.h>
 #include "../include/LinkedListEnv.h"
 
-// Create a node to add to a list from a given value val
-static Node* create_node(char* val);
+// Create a node to add to a list
+static Node *create_node(char *name, char *value);
 // gets a value and return's its node
 static Node* get_node_by_value(List* self, char* val);
 // gets an index and return's its node
@@ -23,22 +23,22 @@ List* create_list()
 	return ans;
 }
 
-void add_first(List *self, char* val)
+void add_first(List *self, char* name, char* val)
  {
 	if (is_empty(self))
 	{
 		add_last(self, val);
 		return;
 	}
-	Node *add = create_node(val);
+	Node *add = create_node(name, val);
 	add->next = self->start;
 	self->start = add;
 	self->size++;
 }
 
-void add_last(List *self, char* val)
+void add_last(List *self, char* name, char* val)
 {
-	Node *to_add = create_node(val);
+	Node *to_add = create_node(name, val);
 	if (is_empty(self))
 	{
 		self->start = to_add;
@@ -52,7 +52,7 @@ void add_last(List *self, char* val)
 	self->size++;
 }
 
-int add_before_index(List* self, int index, char* val)
+int add_before_index(List* self, int index, char* name, char* val)
 {
 	Node* node = get_node_by_index(self, index);
 	if (is_index_out_of_bounds(self, index))
@@ -62,14 +62,14 @@ int add_before_index(List* self, int index, char* val)
 	else if (self->end == node) // case end
 	{
 		Node* bef = get_the_node_before(self, node, self->start);
-		Node* new_node = create_node(val);
+		Node* new_node = create_node(name, val);
 		bef->next = new_node;
 		new_node->next = self->end;
 	}
 	else // case not end or start
 	{
 		Node* bef = get_the_node_before(self, node, self->start->next);
-		Node* new_node = create_node(val);
+		Node* new_node = create_node(name,val);
 		bef->next = new_node;
 		new_node->next = node;
 	}
@@ -85,15 +85,15 @@ int add_after_index(List* self, int index, char* val)
 	else if (self->start == node) // case start
 	{
 		Node* start_next_next = self->start->next->next;
-		Node* new_node = create_node(val);
+		Node* new_node = create_node(name,val);
 		self->start->next = new_node;
 		new_node->next = start_next_next;
 	}
 	else if (self->end == node) // case end
-		add_last(self, val);
+		add_last(self, name,val);
 	else // case not end or start
 	{
-		Node* new_node = create_node(val);
+		Node* new_node = create_node(name,val);
 		Node* next_node = node->next;
 		node->next = new_node;
 		new_node->next = next_node;
@@ -203,7 +203,7 @@ int remove_last(List* self)
 	return 0;
 }
 
-int remove_by_value(List* self, char* val)
+/*int remove_by_value(List* self, char* val)
 {
 	// check if the value is in the list
 	if (!contains(self, val))
@@ -228,7 +228,7 @@ int remove_by_value(List* self, char* val)
 	}
 	self->size--;
 	return 0;
-}
+}*/
 
 int contains(List *self, char* val) // search for a val in the list
 {
@@ -240,7 +240,7 @@ int is_empty(List *self)
 	return self->size == 0;
 }
 
-List* reverse(List *self)
+/*List* reverse(List *self)
 {
 	List* list = clone(self); // create a copy of list
 	if (list == NULL) // if clone failed
@@ -259,9 +259,9 @@ List* reverse(List *self)
 	list->start = prev;
 	list->end = tmp;
 	return list;
-}
+}*/
 
-List* clone(List *self)
+/*List* clone(List *self)
 {
 	// check if self is null
 	if (is_empty(self))
@@ -294,7 +294,7 @@ List* clone(List *self)
 
 	// return new list
 	return new_list;
-}
+}*/
 
 static Node* get_node_by_value(List *self, char* val)
 {
@@ -334,10 +334,11 @@ static int is_index_out_of_bounds(List *self, int index)
 	return index >= self->size;
 }
 
-static Node* create_node(char* val)
+static Node* create_node(char* name, char* value)
 {
 	Node *new_node = (Node*)malloc(sizeof(Node));
-	new_node->data = val;
+	new_node->name = name;
+	new_node->value = value;
 	new_node->next = NULL;
 	return new_node;
 }

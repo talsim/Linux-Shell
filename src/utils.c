@@ -152,6 +152,28 @@ void executeBuiltin(cmdLine *parsedLine, char buffer[MAX_INPUT_SIZE], List *hist
         else
             printErrMsg(command, "event not found");
     }
+    else if (isCommand(command, "set") || isCommand(command, "env") || isCommand(command, "delete")) // if command is related to env variables
+    {
+        List *envVars = create_list();
+        executeEnvVars(command, parsedLine, envVars);
+    }
+}
+
+int executeEnvCommands(char *command, cmdLine *parsedLine, List *envVars)
+{
+    if (isCommand(command, "set"))
+    {
+        executeSet(parsedLine, envVars);
+    } 
+    else if (isCommand(command, "env"))
+    {
+        executeEnv(parsedLine, envVars);
+    }
+    else if (isCommand(command, "delete"))
+    {
+        executeDelete(parsedLine, envVars);
+    }
+    return 1;
 }
 
 int executeSingleCommand(cmdLine *pCmdLine)

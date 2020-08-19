@@ -8,3 +8,9 @@ int invokeCommandByIndex(List *history, char buffer[2048], int index);
 
 /*Prints history in Linux printing style*/
 void printHistory(List *history);
+
+int executeSet(cmdLine *line, List *envVars);
+
+int executeEnv(cmdLine *line, List *envVars);
+
+int executeDelete(cmdLine *line, List *envVars);

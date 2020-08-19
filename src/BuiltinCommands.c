@@ -45,3 +45,18 @@ void printHistory(List *history)
     for (int i = 0; i < history->size; i++)
         printf("%d %s\n", i, get(history, i));
 }
+
+int executeSet(cmdLine *line, List *envVars)
+{
+    if () // if name already exists
+}
+
+int executeEnv(cmdLine *line, List *envVars)
+{
+
+}
+
+int executeDelete(cmdLine *line, List *envVars)
+{
+    
+}
