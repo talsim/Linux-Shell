@@ -20,6 +20,7 @@ int main(int argc, char **argv)
     programName = argv[0] + 2; // argv[0] + 2 = program name without "./"
 
     List *history = create_list();
+    List *envVars = create_list();
 
     char *buf = NULL;
     while (1)
@@ -36,7 +37,7 @@ int main(int argc, char **argv)
             if (!isQuit(command)) // if user entered a command
             {
                 saveCommand(history, buf, parsedLine->arguments);
-                execute(parsedLine, buf, history);
+                execute(parsedLine, buf, history, envVars);
             }
             else
             {
