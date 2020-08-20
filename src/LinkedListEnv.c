@@ -4,26 +4,26 @@
 #include "../include/LinkedListEnv.h"
 
 // Create a node to add to a list
-static Node *create_node(char *name, char *value);
+static Node_env *create_node(char *name, char *value);
 // gets a value and return's its node
-static Node* get_node_by_value(List* self, char* val);
-// gets an index and return's its node
-static Node* get_node_by_index(List* self, int index);
-// gets a node and return's the node before
-static Node* get_the_node_before(List* self, Node* node, Node* startPos);
+static Node_env* get_node_by_value(List_env* self, char* val);
+// // gets an index and return's its node
+// static Node* get_node_by_index(List* self, int index);
+// // gets a node and return's the node before
+// static Node* get_the_node_before(List* self, Node* node, Node* startPos);
 // check's if the index is out of the list bounds
-static int is_index_out_of_bounds(List* self, int index);
+static int is_index_out_of_bounds(List_env* self, int index);
 
-List* create_list()
+List_env* create_list_env()
 {
-	List *ans = (List*)malloc(sizeof(List));
+	List_env *ans = (List_env*)malloc(sizeof(List_env));
 	ans->size = 0;
 	ans->start = NULL;
 	ans->end = NULL;
 	return ans;
 }
 
-void add_first(List *self, char* name, char* val)
+/*void add_first(List *self, char* name, char* val)
  {
 	if (is_empty(self))
 	{
@@ -34,12 +34,12 @@ void add_first(List *self, char* name, char* val)
 	add->next = self->start;
 	self->start = add;
 	self->size++;
-}
+}*/
 
-void add_last(List *self, char* name, char* val)
+void add_last_env(List_env *self, char* name, char* val)
 {
-	Node *to_add = create_node(name, val);
-	if (is_empty(self))
+	Node_env *to_add = create_node(name, val);
+	if (is_empty_env(self))
 	{
 		self->start = to_add;
 		self->end = to_add;
@@ -52,7 +52,7 @@ void add_last(List *self, char* name, char* val)
 	self->size++;
 }
 
-int add_before_index(List* self, int index, char* name, char* val)
+/*int add_before_index(List* self, int index, char* name, char* val)
 {
 	Node* node = get_node_by_index(self, index);
 	if (is_index_out_of_bounds(self, index))
@@ -203,7 +203,7 @@ int remove_last(List* self)
 	return 0;
 }
 
-/*int remove_by_value(List* self, char* val)
+int remove_by_value(List* self, char* val)
 {
 	// check if the value is in the list
 	if (!contains(self, val))
@@ -230,12 +230,12 @@ int remove_last(List* self)
 	return 0;
 }*/
 
-int contains(List *self, char* val) // search for a val in the list
+int contains_env(List_env *self, char* name) // search for a name in the list
 {
-	return get_node_by_value(self, val) != NULL;
+	return get_node_by_value(self, name) != NULL;
 }
 
-int is_empty(List *self)
+int is_empty_env(List_env *self)
 {
 	return self->size == 0;
 }
@@ -296,47 +296,47 @@ int is_empty(List *self)
 	return new_list;
 }*/
 
-static Node* get_node_by_value(List *self, char* val)
+static Node_env* get_node_by_value(List_env *self, char* name)
 {
-	Node *curr = self->start;
+	Node_env *curr = self->start;
 	while (curr != NULL)
 	{
-		if (curr->data == val)
+		if (curr->name == name)
 			return curr;
 		curr = curr->next;
 	}
 	return NULL;
 }
 
-static Node* get_node_by_index(List *self, int index)
-{
-	Node *curr = self->start;
-	int count = 0;
-	while (curr != NULL)
-	{
-		if (count == index)
-			return curr;
-		count++;
-		curr = curr->next;
-	}
-	return NULL;
-}
+// static Node* get_node_by_index(List *self, int index)
+// {
+// 	Node *curr = self->start;
+// 	int count = 0;
+// 	while (curr != NULL)
+// 	{
+// 		if (count == index)
+// 			return curr;
+// 		count++;
+// 		curr = curr->next;
+// 	}
+// 	return NULL;
+// }
 
-static Node* get_the_node_before(List *self, Node* node, Node *startPos)
-{
-	Node *bef_node = startPos;
-	for (; bef_node->next != node; bef_node = bef_node->next);
-	return bef_node;
-}
+// static Node* get_the_node_before(List *self, Node* node, Node *startPos)
+// {
+// 	Node *bef_node = startPos;
+// 	for (; bef_node->next != node; bef_node = bef_node->next);
+// 	return bef_node;
+// }
 
-static int is_index_out_of_bounds(List *self, int index)
+static int is_index_out_of_bounds(List_env *self, int index)
 {
 	return index >= self->size;
 }
 
-static Node* create_node(char* name, char* value)
+static Node_env* create_node(char* name, char* value)
 {
-	Node *new_node = (Node*)malloc(sizeof(Node));
+	Node_env *new_node = (Node_env*)malloc(sizeof(Node_env));
 	new_node->name = name;
 	new_node->value = value;
 	new_node->next = NULL;
