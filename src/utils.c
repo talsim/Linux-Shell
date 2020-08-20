@@ -40,6 +40,13 @@ int isCommand(const char *command, char *compareTo)
     return strcmp(command, compareTo) == 0;
 }
 
+int isEnvVarsCommand(char *command)
+{
+    return strcmp(command, "set") == 0 ||
+    strcmp(command, "env") == 0 ||
+    strcmp(command, "delete") == 0;
+}
+
 char *getFormattedCwd()
 {
     char cwd[100] = "";
@@ -130,7 +137,7 @@ int executeFromBin(cmdLine *line)
     return 0;
 }
 
-void executeBuiltin(cmdLine *parsedLine, char buffer[MAX_INPUT_SIZE], List *history)
+void executeBuiltin(cmdLine *parsedLine, char buffer[MAX_INPUT_SIZE], List *history, List *envVars)
 {
     char *command = parsedLine->arguments[0];
     if (isCommand(command, "cd"))
@@ -145,7 +152,7 @@ void executeBuiltin(cmdLine *parsedLine, char buffer[MAX_INPUT_SIZE], List *hist
         if (isInteger(input))
         {
             int index = atoi(input);
-            int result = invokeCommandByIndex(history, buffer, index);
+            int result = invokeCommandByIndex(history, envVars, buffer, index);
             if (result == -1)
                 printErrMsg(command, "event not found");
         }
@@ -154,8 +161,7 @@ void executeBuiltin(cmdLine *parsedLine, char buffer[MAX_INPUT_SIZE], List *hist
     }
     else if (isCommand(command, "set") || isCommand(command, "env") || isCommand(command, "delete")) // if command is related to env variables
     {
-        List *envVars = create_list();
-        executeEnvVars(command, parsedLine, envVars);
+        executeEnvCommands(command, parsedLine, envVars);
     }
 }
 
@@ -183,15 +189,15 @@ int executeSingleCommand(cmdLine *pCmdLine)
     return 0; // execvp failed if code reaches this line
 }
 
-int execute(cmdLine *line, char buffer[MAX_INPUT_SIZE], List *history)
+int execute(cmdLine *line, char buffer[MAX_INPUT_SIZE], List *history, List *envVars)
 {
     if (isBuiltin(line->arguments[0]))
     {
-        executeBuiltin(line, buffer, history);
+        executeBuiltin(line, buffer, history, envVars);
     }
     else
     {
-        executeFromBin(line);
+        executeFromBin(line); // e.g "echo Hello", "cat foo"
     }
     return 0;
 }
@@ -200,8 +206,9 @@ int isBuiltin(char *command)
 {
     if (isCommand(command, "cd") ||
         isCommand(command, "history") ||
-        command[0] == '!')
-        return 1;
+        command[0] == '!' ||
+        isEnvVarsCommand(command))
+        return 1;   
     return 0;
 }
 

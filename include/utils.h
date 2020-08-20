@@ -10,6 +10,8 @@ int isQuit(char *command);
 /*Returns 1 if builtin, 0 otherwise*/
 int isBuiltin(char *command);
 
+int isEnvVarsCommand(char *command);
+
 /*Returns cwd in Linux shell printing style*/
 char *getFormattedCwd();
 
@@ -34,7 +36,7 @@ int saveCommand(List *history, char buffer[2048], char *const argv[MAX_ARGUMENTS
 int executeFromBin(cmdLine *line);
 
 /*Executes builtin command on parent process*/
-void executeBuiltin(cmdLine *parsedLine, char buffer[2048], List *history);
+void executeBuiltin(cmdLine *parsedLine, char buffer[2048], List *history, List *envVars);
 
 int executeEnvCommands(char *command, cmdLine *parsedLine, List *envVars);
 
@@ -44,7 +46,7 @@ int executeSingleCommand(cmdLine *pCmdLine);
 
 /*Forks and executes the command on the child proccess*/
 /*Returns 0 if it was successful, else, returns -1*/
-int execute(cmdLine *line, char buffer[2048], List *history);
+int execute(cmdLine *line, char buffer[2048], List *history, List *envVars);
 
 /*Checks if the given string is empty*/
 /*Returns 1 if true, 0 elsewise*/
