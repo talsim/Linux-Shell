@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include "../include/LineParser.h"
+#include "../include/LinkedListEnv.h"
 #include "../include/LinkedList.h"
 #include "../include/utils.h"
 
@@ -24,7 +25,7 @@ int changeCwd(cmdLine *line)
     return 0;
 }
 
-int invokeCommandByIndex(List *history, char buffer[2048], int index)
+int invokeCommandByIndex(List *history, List *envVars, char buffer[2048], int index)
 {
     char *data = get(history, index);
     if (data)
@@ -32,7 +33,7 @@ int invokeCommandByIndex(List *history, char buffer[2048], int index)
         cmdLine *line = parseCmdLines(data);
         saveCommand(history, data, line->arguments);
         printf("%s\n", data); // print command to console before running it
-        int execResult = execute(line, buffer, history);
+        int execResult = execute(line, buffer, history, envVars);
         freeCmdLines(line);
         if (execResult == 0)
             return 0;
@@ -46,17 +47,26 @@ void printHistory(List *history)
         printf("%d %s\n", i, get(history, i));
 }
 
-int executeSet(cmdLine *line, List *envVars)
+void executeSet(cmdLine *line, List_env *envVars)
 {
-    if () // if name already exists
+    char *name = line->arguments[1];
+    char *value = line->arguments[2];
+    if (!contains_env(envVars, name)) // if name doesn't exist
+    {
+        add_last_env(envVars, name, value);
+    }
+    else
+    {
+        // override the existing value
+    }
 }
 
-int executeEnv(cmdLine *line, List *envVars)
-{
-
-}
-
-int executeDelete(cmdLine *line, List *envVars)
+void executeEnv(cmdLine *line, List_env *envVars)
 {
     
+}
+
+void executeDelete(cmdLine *line, List_env *envVars)
+{
+
 }
