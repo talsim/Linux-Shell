@@ -58,12 +58,16 @@ void executeSet(cmdLine *line, List_env *envVars)
     else
     {
         // override the existing value
+
     }
 }
 
 void executeEnv(cmdLine *line, List_env *envVars)
 {
-    
+    for (int i = 0; i < envVars->size; i++)
+    {
+        printf("%d %s:%s\n", i, get_env(envVars, i))
+    }
 }
 
 void executeDelete(cmdLine *line, List_env *envVars)

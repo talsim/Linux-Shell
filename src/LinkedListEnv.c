@@ -157,24 +157,24 @@ char* get_last(List* self)
 		return 0;
 	}
 }
-
-char* get(List* self, int index)
+*/
+char* get_env(List_env* self, int index)
 {
 	if (is_index_out_of_bounds(self, index))
 		return NULL;
 
 	int count = 0;
-	Node* curr = self->start;
+	Node_env* curr = self->start;
 	while (curr != NULL)
 	{
 		if (count == index)
-			return curr->data;
+			return curr->name;
 		count++;
 		curr = curr->next;
 	}
 	return NULL;
 }
-
+/*
 int remove_first(List* self)
 {
 	if (is_empty(self))

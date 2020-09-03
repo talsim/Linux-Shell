@@ -36,8 +36,8 @@ void add_last_env(List_env *self, char *name, char *val);
 // /*Get the last value.*/
 // char *get_last(List *self);
 
-// /*Get value at given index.*/
-// char *get(List *self, int index);
+/*Get value at given index.*/
+char *get_env(List_env *self, int index);
 
 // /*Remove first value.*/
 // /*Returns 0 if succeeded, -1 elsewise.*/
